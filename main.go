@@ -54,7 +54,6 @@ func main() {
 			}
 			args = append(args, relProtoFile)
 			cmd := exec.Command(protoc, args...)
-			fmt.Println(cmd)
 			cmd.Env = append(cmd.Env, os.Environ()...)
 			cmd.Env = append(cmd.Env, "GOBIN="+GOBIN)
 			output, cmdErr := cmd.CombinedOutput()
@@ -104,7 +103,6 @@ func main() {
 			var dstPbGoFile string
 			dstPbGoFile, err = filepath.Rel(modulePath, srcPbGoFile)
 			if err != nil {
-				fmt.Println(err)
 				continue
 			}
 			err = os.Link(srcPbGoFile, dstPbGoFile)
@@ -143,6 +141,7 @@ func main() {
 			fmt.Println(err)
 		}
 	}
+	fmt.Println("生成proto.go成功")
 }
 
 func envFile() (string, error) {

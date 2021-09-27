@@ -18,9 +18,7 @@
 
 ### 运行：
 
-正确运行后命令行会显示：
-
-![image-20210927193647544](https://cdn.jsdelivr.net/gh/inkdp/CDN@main/img/20210927193647.png)
+正确运行后命令行会提示：`生成proto.go成功`
 
 根据`proto`文件会生成`xxx.pb.go`和`xxx_grpc.pb.go`
 
