@@ -26,4 +26,8 @@
 
 ## ⚠️注意⚠️
 
-因为`proto`文件导入其他`proto`文件，以及文件目录和包名等一系列组合原因，可能出现正确编译，但生成的`go`文件出现包引用错误，定义`proto`文件时，`option go_package`请指定完整包名
+因为`proto`文件导入其他`proto`文件，以及文件目录和包名等一系列组合原因，可能出现正确编译，但生成的`go`文件出现包引用错误，定义`proto`文件时，`option go_package`为`go.mod`中的名称加项目内相对路径，需要导入包`import`填入被导入包在项目内相对路径，举个栗子ð：
+```protobuf
+option go_package = "proto_build/server/proto/file"; // proto_build为项目名称，server/proto/file为项目内相对路径
+import "server/proto/cascade/cascade.proto"; // server/proto/cascade/cascade.proto 项目内相对路径
+```

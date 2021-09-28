@@ -14,12 +14,44 @@ import (
 const protoc = "protoc"
 
 func main() {
+	// 运行环境检测
+	cmd := exec.Command("protoc", "--version")
+	output, cmdErr := cmd.CombinedOutput()
+	if !strings.Contains(string(output), "libprotoc") || cmdErr != nil{
+		fmt.Println("protoc 不存在请自行安装")
+		return
+	}
+
 	pwd, wdErr := os.Getwd()
 	if wdErr != nil {
 		os.Exit(1)
 	}
 
 	GOBIN := GetGoBin()
+
+	_, fileErr := os.Open(filepath.Join(GOBIN, "protoc-gen-go"))
+	if fileErr != nil {
+		if os.IsNotExist(fileErr){
+			cmd = exec.Command("go", "install", "google.golang.org/protobuf/cmd/protoc-gen-go@v1.26")
+			_, err := cmd.CombinedOutput()
+			if err != nil {
+				fmt.Println("下载protoc-gen-go失败")
+				return
+			}
+		}
+	}
+	_, fileErr = os.Open(filepath.Join(GOBIN, "protoc-gen-go-grpc"))
+	if fileErr != nil {
+		if os.IsNotExist(fileErr){
+			cmd = exec.Command("go", "install", "google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1")
+			_, err := cmd.CombinedOutput()
+			if err != nil {
+				fmt.Println("下载protoc-gen-go失败")
+				return
+			}
+		}
+	}
+
 	protoFilesMap := make(map[string][]string)
 	walkErr := filepath.Walk("./", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -44,14 +76,11 @@ func main() {
 	}
 	for _, files := range protoFilesMap {
 		for _, relProtoFile := range files {
-			fmt.Println(relProtoFile)
-			args := []string{"--go_out", "paths=source_relative:.", "--go-grpc_out", pwd, "--plugin", "protoc-gen-go=" + filepath.Join(GOBIN, ToolsName("protoc-gen-go")), "--plugin", "protoc-gen-go-grpc=" + filepath.Join(GOBIN, ToolsName("protoc-gen-go-grpc")), "--go-grpc_out", "paths=source_relative:."}
+			args := []string{"--go_out", "paths=source_relative:.", "--go-grpc_out", "paths=source_relative:.", "--plugin", "protoc-gen-go=" + filepath.Join(GOBIN, ToolsName("protoc-gen-go")), "--plugin", "protoc-gen-go-grpc=" + filepath.Join(GOBIN, ToolsName("protoc-gen-go-grpc"))}
 			args = append(args, relProtoFile)
-			fmt.Println(args)
 			cmd := exec.Command(protoc, args...)
 			cmd.Env = append(cmd.Env, os.Environ()...)
 			cmd.Env = append(cmd.Env, "GOBIN="+GOBIN)
-			fmt.Println(cmd)
 			output, cmdErr := cmd.CombinedOutput()
 			if len(output) > 0 {
 				fmt.Println("cmd:", string(output))
@@ -130,7 +159,6 @@ func main() {
 			continue
 		}
 	}
-
 	if err == nil {
 		err = os.RemoveAll(strings.Split(modulePath, "/")[0])
 		if err != nil {
