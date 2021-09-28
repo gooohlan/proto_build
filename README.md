@@ -7,8 +7,8 @@
 确保你有完整的GRPC运行环境(`protoc`，`protoc-gen-go`，`protoc-gen-go-grpc`)，不完整的请自行安装，下面的安装方式可能有误，出现错误请查找网上教程
 
 - **protoc**：[下载最新](https://github.com/protocolbuffers/protobuf/releases/)的`protoc`放入`bin`目录下
-- **protoc-gen-go**：`go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26`
-- **protoc-gen-go-grpc**：`go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1`
+- **protoc-gen-go**：`go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26`(v0.0.3会自动下载)
+- **protoc-gen-go-grpc**：`go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1`(v0.0.3会自动下载)
 
 ## 使用：
 
