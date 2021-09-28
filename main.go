@@ -11,8 +11,6 @@ import (
 	"strings"
 )
 
-var protoFilesUsingProtocGenGoFast = map[string]bool{"": true}
-
 const protoc = "protoc"
 
 func main() {
@@ -46,16 +44,14 @@ func main() {
 	}
 	for _, files := range protoFilesMap {
 		for _, relProtoFile := range files {
-			var args []string
-			if protoFilesUsingProtocGenGoFast[relProtoFile] {
-				args = []string{"--gofast_out", pwd, "--plugin", "protoc-gen-gofast=" + GOBIN + "/protoc-gen-gofast"}
-			} else {
-				args = []string{"--go_out", pwd, "--go-grpc_out", pwd, "--plugin", "protoc-gen-go=" + filepath.Join(GOBIN, ToolsName("protoc-gen-go")), "--plugin", "protoc-gen-go-grpc=" + filepath.Join(GOBIN, ToolsName("protoc-gen-go-grpc"))}
-			}
+			fmt.Println(relProtoFile)
+			args := []string{"--go_out", "paths=source_relative:.", "--go-grpc_out", pwd, "--plugin", "protoc-gen-go=" + filepath.Join(GOBIN, ToolsName("protoc-gen-go")), "--plugin", "protoc-gen-go-grpc=" + filepath.Join(GOBIN, ToolsName("protoc-gen-go-grpc")), "--go-grpc_out", "paths=source_relative:."}
 			args = append(args, relProtoFile)
+			fmt.Println(args)
 			cmd := exec.Command(protoc, args...)
 			cmd.Env = append(cmd.Env, os.Environ()...)
 			cmd.Env = append(cmd.Env, "GOBIN="+GOBIN)
+			fmt.Println(cmd)
 			output, cmdErr := cmd.CombinedOutput()
 			if len(output) > 0 {
 				fmt.Println("cmd:", string(output))

@@ -15,3 +15,6 @@
 # vendor/
 .idea
 .DS_Store
+.gitignore
+proto_build*
+proto/
